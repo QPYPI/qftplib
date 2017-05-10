@@ -32,6 +32,7 @@ import org.swiftp.server.ProxyConnector;
 import org.swiftp.server.SessionThread;
 import org.swiftp.server.TcpListener;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -39,8 +40,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -262,24 +265,49 @@ public abstract class FTPServerService extends Service implements Runnable {
         notificationMgr = (NotificationManager) getSystemService(ns);
 
         // Instantiate a Notification
-        int icon = R.drawable.ftp_notification;
+        int smallIconId = R.drawable.ftp_notification;
+        //Bitmap largeIconId = R.drawable.ftp_notification;
         CharSequence tickerText = getString(R.string.notif_server_starting);
         long when = System.currentTimeMillis();
-        Notification notification = new Notification(icon, tickerText, when);
 
-        // Define Notification's message and Intent
+
         CharSequence contentTitle = getString(R.string.notif_title);
         CharSequence contentText = getString(R.string.notif_text);
         Intent notificationIntent = new Intent(this, getSettingClass());
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
-        notification.contentIntent = contentIntent;
-        notification.setLatestEventInfo(getApplicationContext(), contentTitle,
-                contentText, contentIntent);
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
-        // Pass Notification to NotificationManager
+        Notification notification;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            notification = new Notification.Builder(this)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText)
+                    .setSmallIcon(smallIconId)
+                    //.setLargeIcon(largeIconId)
+                    .setAutoCancel(false)
+                    .setContentIntent(contentIntent)
+                    .build();
+
+        } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            notification = new Notification.Builder(this)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText)
+                    .setSmallIcon(smallIconId)
+                    .setSmallIcon(smallIconId)
+                    //.setLargeIcon(largeIconId)
+                    .setAutoCancel(false)
+                    .setContentIntent(contentIntent)
+                    .getNotification();
+
+        } else {
+            notification = new Notification(smallIconId, tickerText, when);
+            notification.contentIntent = contentIntent;
+            notification.tickerText = contentTitle;
+            notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        }
+
         notificationMgr.notify(0, notification);
+
 
         myLog.d("Notication setup done");
     }
@@ -492,7 +520,7 @@ public abstract class FTPServerService extends Service implements Runnable {
     private void takeWifiLock() {
         myLog.d("Taking wifi lock");
         if (wifiLock == null) {
-            WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            WifiManager manager = (WifiManager) this.getApplication().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifiLock = manager.createWifiLock("SwiFTP");
             wifiLock.setReferenceCounted(false);
         }
@@ -541,7 +569,7 @@ public abstract class FTPServerService extends Service implements Runnable {
         if (myContext == null) {
             throw new NullPointerException("Global context is null");
         }
-        WifiManager wifiMgr = (WifiManager) myContext
+        @SuppressLint("WifiManagerLeak") WifiManager wifiMgr = (WifiManager) myContext
                 .getSystemService(Context.WIFI_SERVICE);
         if (wifiMgr.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
             return true;
