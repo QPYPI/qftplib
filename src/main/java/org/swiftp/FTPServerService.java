@@ -278,6 +278,11 @@ public abstract class FTPServerService extends Service implements Runnable {
                 contentText, contentIntent);
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//        Notification notification = builder.setContentIntent(contentIntent)
+//                .setSmallIcon(icon).setTicker(tickerText).setWhen(when)
+//                .setContentTitle(contentTitle)
+//                .setContentText(contentText).build();
         // Pass Notification to NotificationManager
         notificationMgr.notify(0, notification);
 
