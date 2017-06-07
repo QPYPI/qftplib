@@ -53,4 +53,6 @@
 <string name="pst_disconnected">disconnected</string>
 <string name="storage_warning">Warning: storage is not available. You may want to unmount it.</string>
 <string name="widget_name">FTP Server Widget</string>
+    <string name="ftp_title">FTP setting</string>
+    <string name="ftp_server_setting">FTP Server Setting</string>
 </resources>

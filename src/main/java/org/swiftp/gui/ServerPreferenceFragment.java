@@ -1,43 +1,37 @@
 package org.swiftp.gui;
 
-import java.io.File;
-import java.net.InetAddress;
-
-import org.swiftp.FTPServerService;
-import org.swiftp.Globals;
-import org.swiftp.R;
-
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import org.swiftp.FTPServerService;
+import org.swiftp.Globals;
+import org.swiftp.R;
+
+import java.io.File;
+import java.net.InetAddress;
+
 /**
- * This is the main activity for swiftp, it enables the user to start the server service
- * and allows the users to change the settings.
+ * Created by Hmei on 2017-06-07.
  */
-public class ServerPreferenceActivity extends PreferenceActivity implements
-        OnSharedPreferenceChangeListener {
 
-    private static String TAG = ServerPreferenceActivity.class.getSimpleName();
-
+public class ServerPreferenceFragment extends PreferenceFragment implements
+        SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String TAG = "SPF";
     EditTextPreference mPassWordPref;
     /**
      * This receiver will check FTPServer.ACTION* messages and will update the button,
@@ -91,24 +85,18 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         }
     }
 
-    public static void start(Context context) {
-        Intent starter = new Intent(context, ServerPreferenceActivity.class);
-        context.startActivity(starter);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.ftp_preferences);
-        setContentView(R.layout.activity_preference);
-        Globals.setContext(getApplicationContext());
+
         final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(this);
+                .getDefaultSharedPreferences(getActivity());
         Resources resources = getResources();
 
         CheckBoxPreference running_state = (CheckBoxPreference) findPreference("running_state");
         running_state.setChecked(FTPServerService.isRunning());
-        running_state.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        running_state.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if ((Boolean) newValue) {
@@ -123,14 +111,14 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         EditTextPreference username_pref = (EditTextPreference) findPreference("username");
         username_pref.setSummary(settings.getString("username",
                 resources.getString(R.string.username_default)));
-        username_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        username_pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String newUsername = (String) newValue;
                 if (preference.getSummary().equals(newUsername))
                     return false;
                 if (!newUsername.matches("[a-zA-Z0-9]+")) {
-                    Toast.makeText(ServerPreferenceActivity.this,
+                    Toast.makeText(getActivity(),
                             R.string.username_validation_error, Toast.LENGTH_LONG).show();
                     return false;
                 }
@@ -144,12 +132,12 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         String password = resources.getString(R.string.password_default);
         password = settings.getString("password", password);
         mPassWordPref.setSummary(transformPassword(password));
-        mPassWordPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        mPassWordPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String newPassword = (String) newValue;
                 if (!newPassword.matches("[a-zA-Z0-9]+")) {
-                    Toast.makeText(ServerPreferenceActivity.this,
+                    Toast.makeText(getActivity(),
                             R.string.password_validation_error, Toast.LENGTH_LONG).show();
                     return false;
                 }
@@ -162,7 +150,7 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         EditTextPreference portnum_pref = (EditTextPreference) findPreference("portNum");
         portnum_pref.setSummary(settings.getString("portNum",
                 resources.getString(R.string.portnumber_default)));
-        portnum_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        portnum_pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String newPortnumString = (String) newValue;
@@ -174,7 +162,7 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
                 } catch (Exception e) {
                 }
                 if (portnum <= 0 || 65535 < portnum) {
-                    Toast.makeText(ServerPreferenceActivity.this,
+                    Toast.makeText(getActivity(),
                             R.string.port_validation_error, Toast.LENGTH_LONG).show();
                     return false;
                 }
@@ -187,7 +175,7 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         EditTextPreference chroot_pref = (EditTextPreference) findPreference("chrootDir");
         chroot_pref.setSummary(settings.getString("chrootDir",
                 resources.getString(R.string.chroot_default)));
-        chroot_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        chroot_pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String newChroot = (String) newValue;
@@ -204,7 +192,7 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         });
 
         final CheckBoxPreference wakelock_pref = (CheckBoxPreference) findPreference("stayAwake");
-        wakelock_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        wakelock_pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 stopServer();
@@ -213,10 +201,10 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         });
 
         Preference help = findPreference("help");
-        help.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        help.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                new AlertDialog.Builder(ServerPreferenceActivity.this)
+                new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.help_dlg_title)
                         .setMessage(R.string.help_dlg_message)
                         .setPositiveButton(getText(R.string.ok), null).show();
@@ -225,10 +213,10 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         });
 
         Preference about = findPreference("about");
-        about.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                new AlertDialog.Builder(ServerPreferenceActivity.this)
+                new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.about_dlg_title)
                         .setMessage(R.string.about_dlg_message)
                         .setPositiveButton(getText(R.string.ok), null).show();
@@ -247,23 +235,8 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         }
     }
 
-    private void startServer() {
-        Context context = getApplicationContext();
-        Intent serverService = new Intent(context, FTPServerService.class);
-        if (!FTPServerService.isRunning()) {
-            warnIfNoExternalStorage();
-            startService(serverService);
-        }
-    }
-
-    private void stopServer() {
-        Context context = getApplicationContext();
-        Intent serverService = new Intent(context, FTPServerService.class);
-        stopService(serverService);
-    }
-
     @Override
-    protected void onResume() {
+    public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
 
@@ -276,21 +249,36 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
         filter.addAction(FTPServerService.ACTION_STARTED);
         filter.addAction(FTPServerService.ACTION_STOPPED);
         filter.addAction(FTPServerService.ACTION_FAILEDTOSTART);
-        registerReceiver(ftpServerReceiver, filter);
+        getActivity().registerReceiver(ftpServerReceiver, filter);
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         Log.v(TAG, "onPause");
         super.onPause();
 
         Log.v(TAG, "Unregistering the FTPServer actions");
-        unregisterReceiver(ftpServerReceiver);
+        getActivity().unregisterReceiver(ftpServerReceiver);
 
         // unregister the listener
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
 
+    }
+
+    private void startServer() {
+        Context context = getActivity().getApplicationContext();
+        Intent serverService = new Intent(context, FTPServerService.class);
+        if (!FTPServerService.isRunning()) {
+            warnIfNoExternalStorage();
+            getActivity().startService(serverService);
+        }
+    }
+
+    private void stopServer() {
+        Context context = getActivity().getApplicationContext();
+        Intent serverService = new Intent(context, FTPServerService.class);
+        getActivity().stopService(serverService);
     }
 
     /**
@@ -300,12 +288,11 @@ public class ServerPreferenceActivity extends PreferenceActivity implements
     private void warnIfNoExternalStorage() {
         String storageState = Environment.getExternalStorageState();
         if (!storageState.equals(Environment.MEDIA_MOUNTED)) {
-            Log.v(TAG, "Warning due to storage state " + storageState);
-            Toast toast = Toast.makeText(this, R.string.storage_warning,
+            Log.v(TAG, "Warning due to storage stat" + storageState);
+            Toast toast = Toast.makeText(getActivity(), R.string.storage_warning,
                     Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
     }
-
 }
