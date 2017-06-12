@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_dlg_message">ABOUT Message</string>
+    <string name="about_dlg_title">FTP Server About</string>
+    <string name="about_label">About...</string>
+    <string name="acceptproxy_default">false</string>
+    <string name="acceptproxy_label">Accept connection from net proxy</string>
+    <string name="acceptwifi_default">true</string>
+    <string name="acceptwifi_label">Accept connection from wifi</string>
+    <string name="advancedsettings_label">Advanced Settings...</string>
+    <string name="app_name">QFtplib</string>
+    <string name="cant_get_url">Can\'t retreive url</string>
+    <string name="chroot_default">/</string>
+    <string name="chroot_label">Stay in folder</string>
+    <string name="extra_label">Extra</string>
+    <string name="ftp_server_setting">FTP Server Setting</string>
+    <string name="ftp_title">FTP setting</string>
+    <string name="help_dlg_message">HELP Message</string>
+    <string name="help_dlg_title">FTP Server Help</string>
+    <string name="help_label">Help...</string>
+    <string name="notif_server_starting">FTP Server started</string>
+    <string name="notif_text">Server is accepting FTP connections.</string>
+    <string name="notif_title">FTP Server is running</string>
+    <string name="ok">OK</string>
+    <string name="password_default">ftp</string>
+    <string name="password_label">Password</string>
+    <string name="password_validation_error">The password must consist of 1 or more alphanumeric characters. No other characters are allowed.</string>
+    <string name="port_validation_error">The port number must be in the range 1 to 65535.</string>
+    <string name="portnumber_default">2121</string>
+    <string name="portnumber_label">Port Number</string>
+    <string name="pst_connected">connected</string>
+    <string name="pst_connecting">connecting</string>
+    <string name="pst_disconnected">disconnected</string>
+    <string name="pst_failed">failed</string>
+    <string name="pst_unreachable">unreachable</string>
+    <string name="running_label">Running</string>
+    <string name="running_summary_failed">Failed to start the FTP server</string>
+    <string name="running_summary_started">FTP server running at %s</string>
+    <string name="running_summary_stopped">Start FTP server</string>
+    <string name="settings_label">Settings</string>
+    <string name="show_password_default">
+    false
+</string>
+    <string name="show_password_label">
+    Display password
+</string>
+    <string name="storage_warning">Warning: storage is not available. You may want to unmount it.</string>
+    <string name="swiftp_name">FTP Server</string>
+    <string name="unknown">unknown</string>
+    <string name="username_default">ftp</string>
+    <string name="username_label">Username</string>
+    <string name="username_validation_error">The username must consist of 1 or more letters. No other characters are allowed.</string>
+    <string name="wakelock_default">true</string>
+    <string name="wakelock_label">Keep device awake (full CPU speed)</string>
+    <string name="widget_name">FTP Server Widget</string>
+    <string name="wifi_state_receiver_label">WifiStateReceiver</string>
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+</resources>

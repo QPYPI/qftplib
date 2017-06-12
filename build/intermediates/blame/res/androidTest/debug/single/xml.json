@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/Hmei/StudioProjects/qpy2/qftplib/build/intermediates/res/merged/androidTest/debug/xml/header_preferences.xml",
+        "source": "/Users/Hmei/StudioProjects/qpy2/qftplib/build/intermediates/bundles/debug/res/xml/header_preferences.xml"
+    },
+    {
+        "merged": "/Users/Hmei/StudioProjects/qpy2/qftplib/build/intermediates/res/merged/androidTest/debug/xml/ftp_preferences.xml",
+        "source": "/Users/Hmei/StudioProjects/qpy2/qftplib/build/intermediates/bundles/debug/res/xml/ftp_preferences.xml"
+    }
+]
