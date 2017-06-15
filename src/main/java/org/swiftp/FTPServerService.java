@@ -55,47 +55,121 @@ public abstract class FTPServerService extends Service implements Runnable {
     static public final String ACTION_STARTED = "org.swiftp.FTPServerService.STARTED";
     static public final String ACTION_STOPPED = "org.swiftp.FTPServerService.STOPPED";
     static public final String ACTION_FAILEDTOSTART = "org.swiftp.FTPServerService.FAILEDTOSTART";
-
-    protected static Thread serverThread = null;
-    protected boolean shouldExit = false;
-    protected MyLog myLog = new MyLog(getClass().getName());
-    protected static MyLog staticLog = new MyLog(FTPServerService.class.getName());
-
     public static final int BACKLOG = 21;
     public static final int MAX_SESSIONS = 5;
     public static final String WAKE_LOCK_TAG = "SwiFTP";
-
-    // protected ServerSocketChannel wifiSocket;
-    protected ServerSocket listenSocket;
-    protected static WifiLock wifiLock = null;
-
-    // protected static InetAddress serverAddress = null;
-
-    protected static List<String> sessionMonitor = new ArrayList<String>();
-    protected static List<String> serverLog = new ArrayList<String>();
-    protected static int uiLogLevel = Defaults.getUiLogLevel();
-
     // The server thread will check this often to look for incoming
     // connections. We are forced to use non-blocking accept() and polling
     // because we cannot wait forever in accept() if we want to be able
     // to receive an exit signal and cleanly exit.
     public static final int WAKE_INTERVAL_MS = 1000; // milliseconds
+    protected static Thread serverThread = null;
+    protected static MyLog staticLog = new MyLog(FTPServerService.class.getName());
+    protected static WifiLock wifiLock = null;
+    protected static List<String> sessionMonitor = new ArrayList<String>();
+    protected static List<String> serverLog = new ArrayList<String>();
 
+    // protected static InetAddress serverAddress = null;
+    protected static int uiLogLevel = Defaults.getUiLogLevel();
     protected static int port;
     protected static boolean acceptWifi;
     protected static boolean acceptNet;
     protected static boolean fullWake;
-
-    private TcpListener wifiListener = null;
-    private ProxyConnector proxyConnector = null;
-    private final List<SessionThread> sessionThreads = new ArrayList<SessionThread>();
-
     private static SharedPreferences settings = null;
-
+    private final List<SessionThread> sessionThreads = new ArrayList<SessionThread>();
+    protected boolean shouldExit = false;
+    protected MyLog myLog = new MyLog(getClass().getName());
+    // protected ServerSocketChannel wifiSocket;
+    protected ServerSocket listenSocket;
     NotificationManager notificationMgr = null;
     PowerManager.WakeLock wakeLock;
+    private TcpListener wifiListener = null;
+    private ProxyConnector proxyConnector = null;
 
     public FTPServerService() {
+    }
+
+    public static boolean isRunning() {
+        // return true if and only if a server Thread is running
+        if (serverThread == null) {
+            staticLog.l(Log.DEBUG, "Server is not running (null serverThread)");
+            return false;
+        }
+        if (!serverThread.isAlive()) {
+            staticLog.l(Log.DEBUG, "serverThread non-null but !isAlive()");
+        } else {
+            staticLog.l(Log.DEBUG, "Server is alive");
+        }
+        return true;
+    }
+
+    /**
+     * Gets the IP address of the wifi connection.
+     *
+     * @return The integer IP address if wifi enabled, or null if not.
+     */
+    public static InetAddress getWifiIp() {
+        Context myContext = Globals.getContext().getApplicationContext();
+        if (myContext == null) {
+            throw new NullPointerException("Global context is null");
+        }
+        WifiManager wifiMgr = (WifiManager) myContext.getSystemService(Context.WIFI_SERVICE);
+        if (isWifiEnabled()) {
+            int ipAsInt = wifiMgr.getConnectionInfo().getIpAddress();
+            if (ipAsInt == 0) {
+                return null;
+            } else {
+                return Util.intToInet(ipAsInt);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isWifiEnabled() {
+        Context myContext = Globals.getContext();
+        if (myContext == null) {
+            throw new NullPointerException("Global context is null");
+        }
+        @SuppressLint("WifiManagerLeak") WifiManager wifiMgr = (WifiManager) myContext
+                .getSystemService(Context.WIFI_SERVICE);
+        if (wifiMgr.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static List<String> getSessionMonitorContents() {
+        return new ArrayList<String>(sessionMonitor);
+    }
+
+    public static List<String> getServerLogContents() {
+        return new ArrayList<String>(serverLog);
+    }
+
+    public static void log(int msgLevel, String s) {
+        serverLog.add(s);
+        int maxSize = Defaults.getServerLogScrollBack();
+        while (serverLog.size() > maxSize) {
+            serverLog.remove(0);
+        }
+        // updateClients();
+    }
+
+    public static void writeMonitor(boolean incoming, String s) {
+    }
+
+    public static int getPort() {
+        return port;
+    }
+
+    public static void setPort(int port) {
+        FTPServerService.port = port;
+    }
+
+    static public SharedPreferences getSettings() {
+        return settings;
     }
 
     @Override
@@ -115,7 +189,6 @@ public abstract class FTPServerService extends Service implements Runnable {
                 Globals.setContext(myContext);
             }
         }
-        return;
     }
 
     @Override
@@ -139,20 +212,6 @@ public abstract class FTPServerService extends Service implements Runnable {
         myLog.l(Log.DEBUG, "Creating server thread");
         serverThread = new Thread(this);
         serverThread.start();
-    }
-
-    public static boolean isRunning() {
-        // return true if and only if a server Thread is running
-        if (serverThread == null) {
-            staticLog.l(Log.DEBUG, "Server is not running (null serverThread)");
-            return false;
-        }
-        if (!serverThread.isAlive()) {
-            staticLog.l(Log.DEBUG, "serverThread non-null but !isAlive()");
-        } else {
-            staticLog.l(Log.DEBUG, "Server is alive");
-        }
-        return true;
     }
 
     @Override
@@ -198,40 +257,39 @@ public abstract class FTPServerService extends Service implements Runnable {
         myLog.l(Log.DEBUG, "Loading settings");
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         //port = Integer.valueOf(settings.getString("portNum", "2121"));
-        String portS = Util.getSP(this, "ftp.port");
+        String portS = settings.getString(getString(R.string.key_port_num),"");
         if (!portS.equals("")) {
         	port = Integer.valueOf(portS);
         } else {
-        	port = 0;
+        	port = Defaults.portNumber;
         }
 
-        if (port == 0) {
-            // If port number from settings is invalid, use the default
-            port = Defaults.portNumber;
-        }
         myLog.l(Log.DEBUG, "Using port " + port);
 
         acceptNet = settings.getBoolean("allowNet", Defaults.acceptNet);
         acceptWifi = settings.getBoolean("allowWifi", Defaults.acceptWifi);
-        fullWake = settings.getBoolean("stayAwake", Defaults.stayAwake);
+        fullWake = settings.getBoolean(getString(R.string.key_stay_awake), Defaults.stayAwake);
 
         // The username, password, and chrootDir are just checked for sanity
         /*String username = settings.getString("username", null);
         String password = settings.getString("password", null);
         String chrootDir = settings.getString("chrootDir", Defaults.chrootDir);
         */
-        
-        String username = Util.getSP(this, "ftp.username");
+
+        String username = settings.getString(getString(R.string.key_username),"");
         if (username.equals("")) {
         	username = Util.getCode(this);
         }
-        String password = Util.getSP(this, "ftp.pwd");
+        String password = settings.getString(getString(R.string.key_ftp_pwd),"");
         if (password.equals("")) {
         	password = Util.getCode(this);
         }
-        String chrootDir = Util.getSP(this, "ftp.root");
+        String chrootDir = settings.getString(getString(R.string.key_root_dir),"");
+        if (chrootDir.equals("")) {
+            chrootDir = "/";
+        }
         Log.d("FTPService", "(username):"+username+"(pwd)"+password+"(chroot)"+chrootDir);
-        
+
         validateBlock: {
             if (username == null || password == null) {
                 myLog.l(Log.ERROR, "Username or password is invalid");
@@ -242,6 +300,8 @@ public abstract class FTPServerService extends Service implements Runnable {
                 myLog.l(Log.ERROR, "Chroot dir is invalid");
                 break validateBlock;
             }
+
+
             Globals.setChrootDir(chrootDirAsFile);
             Globals.setUsername(username);
             return true;
@@ -338,7 +398,7 @@ public abstract class FTPServerService extends Service implements Runnable {
             return;
         }
 
-        if (isWifiEnabled() == false) {
+        if (!isWifiEnabled()) {
             cleanupAndStopService();
             sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
             return;
@@ -517,6 +577,20 @@ public abstract class FTPServerService extends Service implements Runnable {
         }
     }
 
+    // public static void writeMonitor(boolean incoming, String s) {
+    // if(incoming) {
+    // s = "> " + s;
+    // } else {
+    // s = "< " + s;
+    // }
+    // sessionMonitor.add(s.trim());
+    // int maxSize = Defaults.getSessionMonitorScrollBack();
+    // while(sessionMonitor.size() > maxSize) {
+    // sessionMonitor.remove(0);
+    // }
+    // updateClients();
+    // }
+
     private void takeWifiLock() {
         myLog.d("Taking wifi lock");
         if (wifiLock == null) {
@@ -538,86 +612,6 @@ public abstract class FTPServerService extends Service implements Runnable {
     public void errorShutdown() {
         myLog.l(Log.ERROR, "Service errorShutdown() called");
         cleanupAndStopService();
-    }
-
-    /**
-     * Gets the IP address of the wifi connection.
-     * 
-     * @return The integer IP address if wifi enabled, or null if not.
-     */
-    public static InetAddress getWifiIp() {
-        Context myContext = Globals.getContext();
-        if (myContext == null) {
-            throw new NullPointerException("Global context is null");
-        }
-        WifiManager wifiMgr = (WifiManager) myContext
-                .getSystemService(Context.WIFI_SERVICE);
-        if (isWifiEnabled()) {
-            int ipAsInt = wifiMgr.getConnectionInfo().getIpAddress();
-            if (ipAsInt == 0) {
-                return null;
-            } else {
-                return Util.intToInet(ipAsInt);
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static boolean isWifiEnabled() {
-        Context myContext = Globals.getContext();
-        if (myContext == null) {
-            throw new NullPointerException("Global context is null");
-        }
-        @SuppressLint("WifiManagerLeak") WifiManager wifiMgr = (WifiManager) myContext
-                .getSystemService(Context.WIFI_SERVICE);
-        if (wifiMgr.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static List<String> getSessionMonitorContents() {
-        return new ArrayList<String>(sessionMonitor);
-    }
-
-    public static List<String> getServerLogContents() {
-        return new ArrayList<String>(serverLog);
-    }
-
-    public static void log(int msgLevel, String s) {
-        serverLog.add(s);
-        int maxSize = Defaults.getServerLogScrollBack();
-        while (serverLog.size() > maxSize) {
-            serverLog.remove(0);
-        }
-        // updateClients();
-    }
-
-    public static void writeMonitor(boolean incoming, String s) {
-    }
-
-    // public static void writeMonitor(boolean incoming, String s) {
-    // if(incoming) {
-    // s = "> " + s;
-    // } else {
-    // s = "< " + s;
-    // }
-    // sessionMonitor.add(s.trim());
-    // int maxSize = Defaults.getSessionMonitorScrollBack();
-    // while(sessionMonitor.size() > maxSize) {
-    // sessionMonitor.remove(0);
-    // }
-    // updateClients();
-    // }
-
-    public static int getPort() {
-        return port;
-    }
-
-    public static void setPort(int port) {
-        FTPServerService.port = port;
     }
 
     /**
@@ -660,10 +654,6 @@ public abstract class FTPServerService extends Service implements Runnable {
     /** Get the ProxyConnector, may return null if proxying is disabled. */
     public ProxyConnector getProxyConnector() {
         return proxyConnector;
-    }
-
-    static public SharedPreferences getSettings() {
-        return settings;
     }
     
     abstract protected Class<?> getSettingClass();

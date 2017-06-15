@@ -10,6 +10,12 @@ package org.swiftp;
 public final class R {
     public static final class attr {
     }
+    public static final class color {
+        public static int colorAccent=0x7f070000;
+        public static int colorPrimary=0x7f070001;
+        public static int colorPrimaryDark=0x7f070002;
+        public static int white=0x7f070003;
+    }
     public static final class drawable {
         public static int ftp_notification=0x7f020000;
         public static int ic_back=0x7f020001;
@@ -18,9 +24,9 @@ public final class R {
         public static int ic_pause=0x7f020004;
     }
     public static final class id {
-        public static int iv_back=0x7f070000;
-        public static int widget_button_off=0x7f070002;
-        public static int widget_button_on=0x7f070001;
+        public static int iv_back=0x7f080000;
+        public static int widget_button_off=0x7f080002;
+        public static int widget_button_on=0x7f080001;
     }
     public static final class layout {
         public static int activity_preference=0x7f030000;
@@ -39,12 +45,25 @@ public final class R {
         public static int cant_get_url=0x7f060009;
         public static int chroot_default=0x7f06000a;
         public static int chroot_label=0x7f06000b;
+        public static int config=0x7f060030;
         public static int extra_label=0x7f06000c;
-        public static int ftp_server_setting=0x7f060030;
-        public static int ftp_title=0x7f060031;
+        public static int ftp_server_setting=0x7f060031;
+        public static int ftp_title=0x7f060032;
         public static int help_dlg_message=0x7f06000d;
         public static int help_dlg_title=0x7f06000e;
         public static int help_label=0x7f06000f;
+        public static int key_about=0x7f060033;
+        public static int key_ftp_pwd=0x7f060034;
+        public static int key_ftp_state=0x7f060035;
+        public static int key_port_num=0x7f060036;
+        public static int key_qpypi=0x7f060037;
+        public static int key_reset=0x7f060038;
+        public static int key_root=0x7f060039;
+        public static int key_root_dir=0x7f06003a;
+        public static int key_show_pwd=0x7f06003b;
+        public static int key_sl4a=0x7f06003c;
+        public static int key_stay_awake=0x7f06003d;
+        public static int key_username=0x7f06003e;
         public static int notif_server_starting=0x7f060010;
         public static int notif_text=0x7f060011;
         public static int notif_title=0x7f060012;
@@ -81,16 +100,8 @@ public final class R {
     public static final class style {
         /**  API 11 theme customizations can go here. 
  API 14 theme customizations can go here. 
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
          */
         public static int AppBaseTheme=0x7f050000;
-        /**  All customizations that are NOT specific to a particular API-level can go here. 
-         */
-        public static int AppTheme=0x7f050001;
     }
     public static final class xml {
         public static int ftp_preferences=0x7f040000;

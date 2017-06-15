@@ -72,8 +72,7 @@ public class ServerPreferenceFragment extends PreferenceFragment implements
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(Globals
                 .getContext());
         Resources res = Globals.getContext().getResources();
-        boolean showPassword = res.getString(R.string.show_password_default).equals(
-                "true") ? true : false;
+        boolean showPassword = res.getString(R.string.show_password_default).equals("true");
         showPassword = sp.getBoolean("show_password", showPassword);
         if (showPassword == true)
             return password;
@@ -295,4 +294,6 @@ public class ServerPreferenceFragment extends PreferenceFragment implements
             toast.show();
         }
     }
+
+
 }

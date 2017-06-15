@@ -20,10 +20,13 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 package org.swiftp.server;
 
 import org.swiftp.Globals;
+import org.swiftp.R;
 import org.swiftp.Util;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class CmdPASS extends FtpCmd implements Runnable {
@@ -57,9 +60,11 @@ public class CmdPASS extends FtpCmd implements Runnable {
 		}
 		String password;
 		String username;
-		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-		username = Util.getSP(ctx, "ftp.username");
-		password = Util.getSP(ctx, "ftp.pwd");
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		username = settings.getString(ctx.getString(R.string.key_username), "");
+		password = settings.getString(ctx.getString(R.string.key_ftp_pwd), "");
+//		username = Util.getSP(ctx, "ftp.username");
+//		password = Util.getSP(ctx, "ftp.pwd");
 		
         if (username.equals("")) {
         	username = Util.getCode(ctx);
