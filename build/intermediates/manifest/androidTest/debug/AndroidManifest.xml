@@ -3,7 +3,7 @@
     package="org.swiftp.test" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
     <instrumentation
