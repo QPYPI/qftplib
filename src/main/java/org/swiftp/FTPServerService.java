@@ -546,7 +546,7 @@ public abstract class FTPServerService extends Service implements Runnable {
      * @return The integer IP address if wifi enabled, or null if not.
      */
     public static InetAddress getWifiIp() {
-        Context myContext = Globals.getContext();
+       /* Context myContext = Globals.getContext();
         if (myContext == null) {
             throw new NullPointerException("Global context is null");
         }
@@ -561,7 +561,8 @@ public abstract class FTPServerService extends Service implements Runnable {
             }
         } else {
             return null;
-        }
+        }*/
+        return null;
     }
 
     public static boolean isWifiEnabled() {
