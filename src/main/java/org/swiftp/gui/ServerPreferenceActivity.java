@@ -1,33 +1,12 @@
 package org.swiftp.gui;
 
-import java.io.File;
-import java.net.InetAddress;
-
-import org.swiftp.FTPServerService;
-import org.swiftp.Globals;
-import org.swiftp.R;
-
-
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
+
+import org.swiftp.R;
 
 /**
  * This is the main activity for swiftp, it enables the user to start the server service
