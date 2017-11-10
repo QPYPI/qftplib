@@ -57,16 +57,16 @@
     <string name="ftp_server_setting">FTP Server Setting</string>
     <string name="config">Config</string>
 
-    <string name="key_root">root</string>
-    <string name="key_sl4a">sl4a</string>
-    <string name="key_qpypi">qpypi</string>
-    <string name="key_reset">reset_storage</string>
-    <string name="key_ftp_state">running_state</string>
-    <string name="key_username">username</string>
-    <string name="key_ftp_pwd">password</string>
-    <string name="key_port_num">portNum</string>
-    <string name="key_show_pwd">show_password</string>
-    <string name="key_root_dir">chrootDir</string>
-    <string name="key_stay_awake">stayAwake</string>
-    <string name="key_about">about</string>
+    <string name="key_root" translatable="false">root</string>
+    <string name="key_sl4a" translatable="false">sl4a</string>
+    <string name="key_qpypi" translatable="false">qpypi</string>
+    <string name="key_reset" translatable="false">reset_storage</string>
+    <string name="key_ftp_state" translatable="false">running_state</string>
+    <string name="key_username" translatable="false">username</string>
+    <string name="key_ftp_pwd" translatable="false">password</string>
+    <string name="key_port_num" translatable="false">portNum</string>
+    <string name="key_show_pwd" translatable="false">show_password</string>
+    <string name="key_root_dir" translatable="false">chrootDir</string>
+    <string name="key_stay_awake" translatable="false">stayAwake</string>
+    <string name="key_about" translatable="false">about</string>
 </resources>
