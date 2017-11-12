@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 21
+        targetSdkVersion rootProject.ext.targetSdkVersion
     }
 
     buildTypes {
