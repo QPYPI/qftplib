@@ -55,7 +55,7 @@
     <string name="widget_name">FTP Server Widget</string>
     <string name="ftp_title">FTP setting</string>
     <string name="ftp_server_setting">FTP Server Setting</string>
-    <string name="config">Config</string>
+    <string name="config">Extensions</string>
 
     <string name="key_root" translatable="false">root</string>
     <string name="key_sl4a" translatable="false">sl4a</string>
