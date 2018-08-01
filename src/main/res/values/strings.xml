@@ -37,6 +37,8 @@
 
     <!-- old strings -->
     <string name="cant_get_url">Can\'t retreive url</string>
+    <string name="notice">Notice</string>
+
     <string name="unknown">unknown</string>
     <string name="ok">OK</string>
     <string name="username_validation_error">The username must consist of 1 or more letters. No other characters are allowed.</string>
@@ -60,6 +62,8 @@
     <string name="key_root" translatable="false">root</string>
     <string name="key_sl4a" translatable="false">sl4a</string>
     <string name="key_qpypi" translatable="false">qpypi</string>
+    <string name="key_update_qpy3" translatable="false">update_py3</string>
+
     <string name="key_reset" translatable="false">reset_storage</string>
     <string name="key_ftp_state" translatable="false">running_state</string>
     <string name="key_username" translatable="false">username</string>
