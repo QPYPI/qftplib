@@ -1,5 +1,6 @@
 package org.swiftp.gui;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -29,6 +31,7 @@ import java.net.InetAddress;
  * Created by Hmei on 2017-06-07.
  */
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ServerPreferenceFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "SPF";
