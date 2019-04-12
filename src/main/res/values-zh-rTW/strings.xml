@@ -53,4 +53,6 @@
 <string name="pst_disconnected">斷開的</string>
 <string name="storage_warning">警告：存儲不可用，你可能想卸載它</string>
 <string name="widget_name">FTP服務器控件</string>
+<string name="config">擴展功能</string>
+
 </resources>

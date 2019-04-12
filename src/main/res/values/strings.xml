@@ -37,6 +37,8 @@
 
     <!-- old strings -->
     <string name="cant_get_url">Can\'t retreive url</string>
+    <string name="notice">Notice</string>
+
     <string name="unknown">unknown</string>
     <string name="ok">OK</string>
     <string name="username_validation_error">The username must consist of 1 or more letters. No other characters are allowed.</string>
@@ -55,11 +57,9 @@
     <string name="widget_name">FTP Server Widget</string>
     <string name="ftp_title">FTP setting</string>
     <string name="ftp_server_setting">FTP Server Setting</string>
-    <string name="config">Config</string>
+    <string name="config">Extensions</string>
 
-    <string name="key_root" translatable="false">root</string>
-    <string name="key_sl4a" translatable="false">sl4a</string>
-    <string name="key_qpypi" translatable="false">qpypi</string>
+
     <string name="key_reset" translatable="false">reset_storage</string>
     <string name="key_ftp_state" translatable="false">running_state</string>
     <string name="key_username" translatable="false">username</string>
